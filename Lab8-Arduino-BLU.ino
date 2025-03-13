@@ -19,7 +19,7 @@
 */
 #include <SoftwareSerial.h>
 
-SoftwareSerial mySerial(3, 2); // HC-05 Tx & Rx is connected to Arduino #3 & #2
+SoftwareSerial mySerial(2, 3); // HC-05 Tx connected to Arduino #2 & HC-05 Rx to Arduino #3
 
 const byte numChars = 6;       
 char receivedChars[numChars];  // an array to store the received data
@@ -43,8 +43,8 @@ const int BIN1 = 8;           //control pin 1 on the motor driver for the left m
 
 const int trigPin = 6;        //trigger pin for distance snesor
 const int echoPin = 7;        //echo pin for distance sensor
-const int RED = 3;
-const int GREEN = 2;
+const int RED = 5;
+const int GREEN = 4;
 
 
 String botDirection;           //the direction that the robot will drive in (this change which direction the two motors spin in)
@@ -93,8 +93,8 @@ void loop()
 
   duration = pulseIn(echoPin, HIGH);
   distance = (duration*340/10000)/2; // Units are cm
-//  Serial.print("Distance: ");
-//  Serial.println(distance);
+  //Serial.print("Distance: ");
+  //Serial.println(distance);
     delayMicroseconds(50);
 
   if (Serial.available() > 0)                         //if the user has sent a command to the RedBoard
@@ -102,6 +102,7 @@ void loop()
     botDirection = Serial.readStringUntil(' ');       //read the characters in the command until you reach the first space
     motorSpeedStr = Serial.readStringUntil(' ');           //read the characters in the command until you reach the second space
     motorSpeed = motorSpeedStr.toInt();
+    Serial.println(botDirection);
   }
 
   recvWithEndMarker();
@@ -111,39 +112,42 @@ void loop()
     parseData();
     motorSpeed = botSpeed;
     newData = false;
+    Serial.println(botDir[0]);
+    Serial.println(motorSpeed);
+   
   }
 
-  if (distance > 20)
+  if (distance > 10)
   {                                                     //if the switch is in the ON position
-    if (botDirection == "f")                         //if the entered direction is forward
+    if ((botDir[0] == 'f') || (botDirection == "f"))                         //if the entered direction is forward
     {
       rightMotor(-motorSpeed);                                //drive the right wheel forward
       leftMotor(motorSpeed);                                 //drive the left wheel forward
       digitalWrite(GREEN,HIGH);
       digitalWrite(RED,LOW);
     }
-    else if (botDirection == "b")                    //if the entered direction is backward
+    else if ((botDir[0] == 'b') || (botDirection == "b"))                    //if the entered direction is backward
     {
       rightMotor(motorSpeed);                               //drive the right wheel forward
       leftMotor(-motorSpeed);                                //drive the left wheel forward
       digitalWrite(GREEN,HIGH);
       digitalWrite(RED,LOW);
     }
-    else if (botDirection == "r")                     //if the entered direction is right
+    else if ((botDir[0] == 'r') || (botDirection == "r"))                     //if the entered direction is right
     {
       rightMotor(motorSpeed);                               //drive the right wheel forward
       leftMotor(motorSpeed);                                 //drive the left wheel forward
       digitalWrite(GREEN,HIGH);
       digitalWrite(RED,LOW);
     }
-    else if (botDirection == "l")                   //if the entered direction is left
+    else if ((botDir[0] == 'l') || (botDirection == "l"))                   //if the entered direction is left
     {
       rightMotor(-motorSpeed);                                //drive the right wheel forward
       leftMotor(-motorSpeed);                                //drive the left wheel forward
       digitalWrite(GREEN,HIGH);
       digitalWrite(RED,LOW);
     }
-    else if (botDirection == "s")
+    else if ((botDir[0] == 's') || (botDirection == "s"))
     {
       rightMotor(0);
       leftMotor(0);
@@ -151,9 +155,9 @@ void loop()
       digitalWrite(RED,HIGH);
     }
   }
-  else if (distance < 20)
+  else if (distance < 10)
   {
-    if (botDirection == "b")
+    if ((botDir[0] == 'b') || (botDirection == "b"))
     {
       rightMotor(motorSpeed);                               //drive the right wheel forward
       leftMotor(-motorSpeed);                                //drive the left wheel forward
@@ -215,25 +219,25 @@ void recvWithEndMarker() {
     static byte ndx = 0;
     char endMarker = '\n';
     char rc;
-    
-    while (mySerial.available() > 0 && newData == false) {
-        rc = mySerial.read();
+    while (mySerial.available() > 0 && newData == false)
+    {
+      rc = mySerial.read();
 
-        if (rc != endMarker)
+      if (rc != endMarker)
+      {
+        receivedChars[ndx] = rc;
+        ndx++;
+        if (ndx >= numChars)
         {
-          receivedChars[ndx] = rc;
-          ndx++;
-          if (ndx >= numChars)
-          {
-            ndx = numChars - 1;
-          }
+          ndx = numChars - 1;
         }
-        else
-        {
-          receivedChars[ndx] = '\0'; // terminate the string
-          ndx = 0;
-          newData = true;
-        }
+      }
+      else
+      {
+        receivedChars[ndx] = '\0'; // terminate the string
+        ndx = 0;
+        newData = true;
+      }
     }
 }
 /*****************************************************************************************/
