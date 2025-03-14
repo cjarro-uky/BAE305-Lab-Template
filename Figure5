@@ -1,0 +1,11 @@
+  recvWithEndMarker();
+  if (newData == true)
+  {
+    strcpy(tempChars, receivedChars);
+    parseData();
+    botDirection = botDir;
+    motorSpeed = botSpeed;
+    newData = false;
+    Serial.println(botDirection);
+    Serial.println(motorSpeed);
+  }
