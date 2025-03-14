@@ -1,0 +1,33 @@
+/********************************************************************************/
+void recvWithEndMarker() {
+    static byte ndx = 0;
+    char endMarker = '\n';
+    char rc;
+    while (mySerial.available() > 0 && newData == false){
+      rc = mySerial.read();
+      if (rc != endMarker) {
+        receivedChars[ndx] = rc;
+        ndx++;
+        if (ndx >= numChars){
+          ndx = numChars - 1;
+        }
+      }
+      else {
+        receivedChars[ndx] = '\0'; // terminate the string
+        ndx = 0;
+        newData = true;
+      }
+    }
+}
+/*****************************************************************************************/
+void parseData() {      // split the data into its parts
+
+    char * strtokIndx; // this is used by strtok() as an index
+    strtokIndx = strtok(tempChars," ");      // get the first part - the string
+    strcpy(botDir, strtokIndx); // copy it to messageFromPC
+ 
+    strtokIndx = strtok(NULL, " "); // this continues where the previous call left off
+    //strcpy(botSpeed, strtokIndx); // Use this line for sending speed as text
+    botSpeed = atoi(strtokIndx);     // Use this line for sending sepeed as an integer
+
+}
