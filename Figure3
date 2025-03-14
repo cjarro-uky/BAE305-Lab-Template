@@ -1,0 +1,11 @@
+#include <SoftwareSerial.h>
+
+SoftwareSerial mySerial(2, 3); // HC-05 Tx connected to Arduino #2 & HC-05 Rx to Arduino #3
+
+const byte numChars = 16;       
+char receivedChars[numChars];  // an array to store the received data
+char tempChars[numChars];
+
+char botDir[numChars] = {0};         // char type variable for the direction of the robot
+int botSpeed = 0;           //stores the speed of the whole robot
+boolean newData = false;
