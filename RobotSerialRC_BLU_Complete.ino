@@ -41,9 +41,6 @@ const int BIN1 = 8;           //control pin 1 on the motor driver for the left m
 
 const int trigPin = 6;        //trigger pin for distance snesor
 const int echoPin = 7;        //echo pin for distance sensor
-//const int RED = 5;
-//const int GREEN = 4;
-
 
 String botDirection;           //the direction that the robot will drive in (this change which direction the two motors spin in)
 String motorSpeedStr;
@@ -70,9 +67,6 @@ void setup()
   //set the distance sensor trigger pin as output and the echo pin as input
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
-
-  pinMode(RED,OUTPUT);
-  pinMode(GREEN,OUTPUT);
 
   Serial.begin(9600);           //begin serial communication with the computer
   //prompt the user to enter a command
@@ -126,40 +120,30 @@ void loop()
 
   if (distance > 10)
   {                                                     //if the switch is in the ON position
-    if (botDirection == "for")                         //if the entered direction is forward
+    if (botDirection == "f")                         //if the entered direction is forward
     {
       rightMotor(-motorSpeed);                                //drive the right wheel forward
       leftMotor(motorSpeed);                                 //drive the left wheel forward
-//      digitalWrite(GREEN,HIGH);
-//      digitalWrite(RED,LOW);
     }
     else if (botDirection == "b")                    //if the entered direction is backward
     {
       rightMotor(motorSpeed);                               //drive the right wheel forward
       leftMotor(-motorSpeed);                                //drive the left wheel forward
-//      digitalWrite(GREEN,HIGH);
-//      digitalWrite(RED,LOW);
     }
     else if (botDirection == "r")                     //if the entered direction is right
     {
       rightMotor(motorSpeed);                               //drive the right wheel forward
       leftMotor(motorSpeed);                                 //drive the left wheel forward
-//      digitalWrite(GREEN,HIGH);
-//      digitalWrite(RED,LOW);
     }
     else if (botDirection == "l")                   //if the entered direction is left
     {
       rightMotor(-motorSpeed);                                //drive the right wheel forward
       leftMotor(-motorSpeed);                                //drive the left wheel forward
-//      digitalWrite(GREEN,HIGH);
-//      digitalWrite(RED,LOW);
     }
     else if (botDirection == "s")
     {
       rightMotor(0);
       leftMotor(0);
-//      digitalWrite(GREEN,LOW);
-//      digitalWrite(RED,HIGH);
     }
   }
   else if (distance < 10)
