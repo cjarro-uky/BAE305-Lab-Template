@@ -207,7 +207,9 @@ void leftMotor(int motorSpeed)                        //function for driving the
 
 /********************************************************************************/
 void recvWithEndMarker() {
-    static byte ndx = 0;
+/*Taken from https://forum.arduino.cc/t/serial-input-basics-updated/38200. Posted by Robin2*/
+  
+  static byte ndx = 0;
     char endMarker = '\n';
     char rc;
     while (mySerial.available() > 0 && newData == false){
@@ -228,7 +230,8 @@ void recvWithEndMarker() {
 }
 /*****************************************************************************************/
 void parseData() {      // split the data into its parts
-
+/*Taken from https://forum.arduino.cc/t/serial-input-basics-updated/38200. Posted by Robin2*/
+  
     char * strtokIndx; // this is used by strtok() as an index
     strtokIndx = strtok(tempChars," ");      // get the first part - the string
     strcpy(botDir, strtokIndx); // copy it to messageFromPC
