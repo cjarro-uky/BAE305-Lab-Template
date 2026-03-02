@@ -1,0 +1,70 @@
+//---------------------------------------------------------------------------
+// INCLUDE THESE LINES AT THE BEGINNING OF THE SKETCH FILE
+#include <SoftwareSerial.h>
+
+SoftwareSerial mySerial(2, 3); // HC-05 Tx connected to Arduino #2 & HC-05 Rx to Arduino #3
+
+const byte numChars = 16;       
+char receivedChars[numChars];  // an array to store the received data
+char tempChars[numChars];
+
+char botDir[numChars] = {0};         // char type variable for the direction of the robot
+int botSpeed = 0;           //stores the speed of the whole robot
+boolean newData = false;
+
+//---------------------------------------------------------------------------
+// INCLUDE THIS LINE WITHIN THE SETUP FUNCTION
+  mySerial.begin(9600);       //Default Baud Rate for software serial communications
+
+//---------------------------------------------------------------------------
+// INCLUDE THESE LINES WITHIN THE LOOP FUNCTION BELOW THE
+// "if (Serial.available() > 0)                         //if the user has sent a command to the RedBoard"
+// LINE
+  recvWithEndMarker();
+  if (newData == true)
+  {
+    strcpy(tempChars, receivedChars);
+    parseData();
+    botDirection = botDir;
+    motorSpeed = botSpeed;
+    newData = false;
+    Serial.println(botDirection);
+    Serial.println(motorSpeed);
+  }
+
+//---------------------------------------------------------------------------
+// INCLUDE THESE TWO FUNCTIONS AT THE END OF THE SKETCH
+
+/********************************************************************************/
+void recvWithEndMarker() {
+    static byte ndx = 0;
+    char endMarker = '\n';
+    char rc;
+    while (mySerial.available() > 0 && newData == false){
+      rc = mySerial.read();
+      if (rc != endMarker) {
+        receivedChars[ndx] = rc;
+        ndx++;
+        if (ndx >= numChars){
+          ndx = numChars - 1;
+        }
+      }
+      else {
+        receivedChars[ndx] = '\0'; // terminate the string
+        ndx = 0;
+        newData = true;
+      }
+    }
+}
+/*****************************************************************************************/
+void parseData() {      // split the data into its parts
+
+    char * strtokIndx; // this is used by strtok() as an index
+    strtokIndx = strtok(tempChars," ");      // get the first part - the string
+    strcpy(botDir, strtokIndx); // copy it to messageFromPC
+ 
+    strtokIndx = strtok(NULL, "\l\n"); // this continues where the previous call left off
+    //strcpy(botSpeed, strtokIndx); // Use this line for sending speed as text
+    botSpeed = atoi(strtokIndx);     // Use this line for sending sepeed as an integer
+
+}
