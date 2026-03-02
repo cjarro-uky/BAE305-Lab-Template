@@ -20,15 +20,15 @@ boolean newData = false;
 // INCLUDE THESE LINES WITHIN THE LOOP FUNCTION BELOW THE
 // "if (Serial.available() > 0)                         //if the user has sent a command to the RedBoard"
 // LINE
-  recvWithEndMarker();
-  if (newData == true)
+  recvWithEndMarker();                    // Calls a function to check the software serial port
+  if (newData == true)                    // Any new data from the software serial port?
   {
-    strcpy(tempChars, receivedChars);
-    parseData();
-    botDirection = botDir;
-    motorSpeed = botSpeed;
-    newData = false;
-    Serial.println(botDirection);
+    strcpy(tempChars, receivedChars);    // Creates a copy of the received data
+    parseData();                         // Call to a function that parses the received Data
+    botDirection = botDir;               // Assigns the direction received via softweare serial port
+    motorSpeed = botSpeed;               // Assigns the speed received via softweare serial port
+    newData = false;                     // Reset the new data flag
+    Serial.println(botDirection);        // Print new direction and speed
     Serial.println(motorSpeed);
   }
 
@@ -65,6 +65,6 @@ void parseData() {      // split the data into its parts
  
     strtokIndx = strtok(NULL, "\l\n"); // this continues where the previous call left off
     //strcpy(botSpeed, strtokIndx); // Use this line for sending speed as text
-    botSpeed = atoi(strtokIndx);     // Use this line for sending sepeed as an integer
+    botSpeed = atoi(strtokIndx);     // Use this line for sending speed as an integer
 
 }
